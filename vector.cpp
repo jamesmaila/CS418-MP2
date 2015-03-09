@@ -25,7 +25,7 @@ Vector::Vector()
  *     Description: The non-default constructor for camera.
  *                  Sets the vector's position to given coordinates.
  */
-Vector::Vector(float x, float y, float z)
+Vector::Vector(double x, double y, double z)
 {
     X = x;
     Y = y;
@@ -38,7 +38,7 @@ Vector::Vector(float x, float y, float z)
  *     Returns: The magnitude of the vector.
  *     Description: Finds the magnitude of the vector.
  */
-float Vector::Magnitude()
+double Vector::Magnitude()
 {
     return sqrt(pow(X, 2) + pow(Y, 2) + pow(Z, 2));
 }
@@ -51,7 +51,7 @@ float Vector::Magnitude()
  */
 void Vector::Normalize()
 {
-    float magnitude = Magnitude();
+    double magnitude = Magnitude();
 
     X /= magnitude;
     Y /= magnitude;
@@ -69,22 +69,22 @@ void Vector::Normalize()
  *                  This is the main mechanism from which we move the camera.
  *                   
  */
-Vector Vector::Rotate(Vector axis, float angle)
+Vector Vector::Rotate(Vector axis, double angle)
 {
-    float length = axis.Magnitude();
-    float lengthSquared = pow(length, 2);
-    float sinAngle = sin(angle);
-    float cosAngle = cos(angle);
+    double length = axis.Magnitude();
+    double lengthSquared = pow(length, 2);
+    double sinAngle = sin(angle);
+    double cosAngle = cos(angle);
 
-    float x = (axis.X*((axis.X*X)+(axis.Y*Y)+(axis.Z*Z)))*(1-cosAngle) 
+    double x = (axis.X*((axis.X*X)+(axis.Y*Y)+(axis.Z*Z)))*(1-cosAngle) 
                 + (lengthSquared*X*cosAngle) 
                 + (length*(-axis.Z*Y+axis.Y*Z)*sinAngle);
 
-    float y = (axis.Y*((axis.X*X)+(axis.Y*Y)+(axis.Z*Z)))*(1-cosAngle)
+    double y = (axis.Y*((axis.X*X)+(axis.Y*Y)+(axis.Z*Z)))*(1-cosAngle)
                 + (lengthSquared*Y*cosAngle) 
                 + (length*(axis.Z*X-axis.X*Z)*sinAngle);
 
-    float z = (axis.Z*((axis.X*X)+(axis.Y*Y)+(axis.Z*Z)))*(1-cosAngle)
+    double z = (axis.Z*((axis.X*X)+(axis.Y*Y)+(axis.Z*Z)))*(1-cosAngle)
                 + (lengthSquared*Z*cosAngle) 
                 + (length*(-axis.Y*X+axis.X*Y)*sinAngle);
 
@@ -103,9 +103,9 @@ Vector Vector::Rotate(Vector axis, float angle)
  */
 Vector Vector::CrossProduct(Vector b)
 {
-    float x = Y*b.Z - Z*b.Y;
-    float y = -(X*b.Z - Z*b.X);
-    float z = X*b.Y - Y*b.X;
+    double x = Y*b.Z - Z*b.Y;
+    double y = -(X*b.Z - Z*b.X);
+    double z = X*b.Y - Y*b.X;
 
     return Vector(x, y, z);
 }
@@ -121,6 +121,60 @@ Vector & Vector::operator = (Vector rhs)
     X = rhs.X;
     Y = rhs.Y;
     Z = rhs.Z;
+
+    return *this;
+}
+
+/*
+ * Operator +
+ *     Inputs: rhs - Vector to add.
+ *     Returns: None.
+ *     Description: Overloaded addition operator.
+ */
+Vector Vector::operator + (Vector rhs)
+{
+	Vector result;
+
+	result.X = X + rhs.X;
+	result.Y = Y + rhs.Y;
+	result.Z = Z + rhs.Z;
+
+	return result;
+}
+
+/*
+ * Operator +=
+ *     Inputs: rhs - Vector to add to self.
+ *     Returns: None.
+ *     Description: Overloaded plus equal operator.
+ */
+Vector & Vector::operator += (Vector rhs)
+{
+    X += rhs.X;
+    Y += rhs.Y;
+    Z += rhs.Z;
+
+    return *this;
+}
+
+
+Vector Vector::operator - (Vector rhs)
+{
+    Vector result;
+
+    result.X = X - rhs.X;
+    result.Y = Y - rhs.Y;
+    result.Z = Z - rhs.Z;
+
+    return result;
+}
+
+
+Vector & Vector::operator -= (Vector rhs)
+{
+    X -= rhs.X;
+    Y -= rhs.Y;
+    Z -= rhs.Z;
 
     return *this;
 }

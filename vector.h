@@ -6,20 +6,24 @@
 class Vector
 {
     public:
-        float X;
-        float Y;
-        float Z;
+        double X;
+        double Y;
+        double Z;
 
         Vector();
-        Vector(float x, float y, float z);
+        Vector(double x, double y, double z);
 
-        float Magnitude();
+        double Magnitude();
         void Normalize();
-        Vector Rotate(Vector axis, float angle);
-        float DotProduct(Vector b);
+        Vector Rotate(Vector axis, double angle);
+        double DotProduct(Vector b);
         Vector CrossProduct(Vector b);
 
         Vector & operator = (Vector rhs);
+        Vector operator + (Vector rhs);
+        Vector & operator += (Vector rhs);
+        Vector operator - (Vector rhs);
+        Vector & operator -= (Vector rhs);
 };
 
 #endif

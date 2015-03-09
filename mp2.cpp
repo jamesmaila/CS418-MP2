@@ -8,7 +8,12 @@
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
+#include <string>
+#include <sstream>
 #include "camera.h"
+
+#define FPS 100
+#define FONT GLUT_BITMAP_TIMES_ROMAN_24
 
 using namespace std;
 
@@ -16,6 +21,96 @@ float sealevel;
 float polysize;
 
 Camera flyCam;
+
+int frameCount = 0;
+float fps;
+int previousTime;
+
+
+/*
+ * CalculateFPS
+ *     Inputs: None.
+ *     Outputs: None.
+ *     Description: Calculates the running frames per second.
+ */
+void CalculateFPS()
+{
+    frameCount++;
+ 
+    int currentTime = glutGet(GLUT_ELAPSED_TIME);
+ 
+    int timeInterval = currentTime - previousTime;
+ 
+    if (timeInterval > 1000)
+    {
+        fps = frameCount / (timeInterval/1000.0);
+ 
+        previousTime = currentTime;
+ 
+        frameCount = 0;
+    }   
+}
+
+/*
+ * DrawFPS
+ *     Inputs: None.
+ *     Outputs: None.
+ *     Description: Draws the frames per second to the screen.
+ */
+void DrawFPS()
+{
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING); 
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0.0, GLUT_WINDOW_WIDTH, 0.0, GLUT_WINDOW_HEIGHT);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glColor3f(0.0, 1.0, 0.0);
+    glRasterPos2i(10, 10);
+
+    ostringstream stream;
+    
+    (fps == 0) ? (stream << "Calculating FPS...") 
+               : (stream << "FPS: " << fps);
+
+    string fpsString = stream.str();
+    int length = fpsString.length();
+
+    for (int i = 0; i < length; i++)
+    {
+        glutBitmapCharacter(FONT, fpsString[i]);
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+}
+
+/*
+ * Timer
+ *     Inputs: v - Value of the glutTimerFunc value parameter.
+ *     Outputs: None.
+ *     Description: The Glut timer function. 
+ *                  Responsible for synchronizing our animation.
+ */
+void Timer(int v)
+{
+    if (!flyCam.Paused) { CalculateFPS(); }
+
+    glutTimerFunc(1000/FPS, Timer, v);
+}
 
 /*
  * Seed
@@ -132,7 +227,7 @@ void Initialize()
     glEnable(GL_DEPTH_TEST);
 
     sealevel = 0.0;
-    polysize = 0.01;
+    polysize = 0.02;
 }
 
 /*
@@ -187,6 +282,8 @@ void Display()
         glVertex3f(1.0, 1.0, sealevel);
         glVertex3f(0.0, 1.0, sealevel);
     glEnd();
+
+    DrawFPS();
 
     glutSwapBuffers();
     glFlush ();
@@ -289,6 +386,7 @@ int main(int argc, char** argv)
    glutReshapeFunc(Reshape);
    glutKeyboardFunc(Keyboard);
    glutSpecialFunc(ArrowKeys);
+   glutTimerFunc(100, Timer, FPS);
    glutMainLoop();
    return 0;
 }

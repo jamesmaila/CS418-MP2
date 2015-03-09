@@ -17,7 +17,7 @@ Camera::Camera()
     Up = Vector(0.0, 0.0, 1.0);
 
     Paused = false;
-    Velocity = 0.003;
+    Velocity = 0.0015;
     PitchAngle = 0.02;
     RollAngle = 0.03;
     YawAngle = 0.03;
